@@ -15,7 +15,7 @@ async def inspect(
     await request.accept()
     try:
         while True:
-            data = await request.receive_text()
+            data = await request.receive_bytes()
 
             results_json = await controller.inspect(data)
 

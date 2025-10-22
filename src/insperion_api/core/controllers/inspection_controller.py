@@ -1,5 +1,4 @@
 import asyncio
-import base64
 import os
 from pathlib import Path
 
@@ -25,10 +24,9 @@ class InspectionController:
             )
         self.model = YOLO(self.MODEL_PATH)
 
-    def _decode_image(self, data: str) -> np.ndarray:
-        """Decodes a base64 string into an OpenCV image (frame)."""
-        img_bytes = base64.b64decode(data)
-        img_np = np.frombuffer(img_bytes, np.uint8)
+    def _decode_image(self, data: bytes) -> np.ndarray:
+        """Decodes raw image bytes into an OpenCV image (frame)."""
+        img_np = np.frombuffer(data, np.uint8)
         frame = cv2.imdecode(img_np, cv2.IMREAD_COLOR)
         return frame
 
@@ -64,7 +62,7 @@ class InspectionController:
         """
         return self.model(frame, verbose=False)  # Run YOLO detection
 
-    async def inspect(self, data: str) -> dict:
+    async def inspect(self, data: bytes) -> dict:
         """
         The main async processing pipeline for a single image.
         """
