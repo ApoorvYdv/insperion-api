@@ -163,4 +163,8 @@ cython_debug/
 
 .secrets.toml
 
+# vscode workspace settings
 .vscode
+
+# ruff
+.ruff_cache

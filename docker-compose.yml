@@ -17,17 +17,15 @@ services:
     #     "--reload",
     #      "--log-level=debug"
     #   ]
-
     environment:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=debug
-      - DB_USERNAME=root
-      - DB_PASSWORD=root
+      - DB_USERNAME=username
+      - DB_PASSWORD=username
       - DB_ENGINE=postgresql
       - DB_HOST=db
       - DB_PORT=5432
       - DB_NAME=insperion_api
-
     depends_on:
       - db
       - minio
@@ -38,33 +36,25 @@ services:
   db:
     image: postgres:18-alpine
     environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
       - POSTGRES_DB=insperion_api
-
     ports:
       - "5433:5432"
-
     volumes:
       - db:/var/lib/postgresql/data
 
   minio:
     image: minio/minio
     ports:
-        - mode: host
-          protocol: tcp
-          published: "${MINIO_PORT:-9002}"
-          target: 9002
-        - mode: host
-          protocol: tcp
-          published: "${MINIO_CONSOLE_PORT:-9003}"
-          target: 9003
+      - "9002:9002"
+      - "9003:9003"
     volumes:
       - minio_storage:/data
     environment:
-      MINIO_ROOT_USER: minio
-      MINIO_ROOT_PASSWORD: miniominio
-    command: server --address :"${MINIO_PORT:-9002}" --console-address :"${MINIO_CONSOLE_PORT:-9003}" /data
+      MINIO_ROOT_USER: username
+      MINIO_ROOT_PASSWORD: password
+    command: server --address :9002 --console-address :9003 /data
 
 volumes:
   db:

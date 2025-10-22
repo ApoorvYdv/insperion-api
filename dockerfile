@@ -9,7 +9,13 @@ EXPOSE 8000
 RUN mkdir -p ${PROJECT_HOME}
 WORKDIR ${PROJECT_HOME}
 
-RUN apt-get update && apt-get install --no-install-recommends -y gcc libpq-dev python3-dev
+RUN apt-get update && apt-get install --no-install-recommends -y \
+    gcc \
+    libpq-dev \
+    python3-dev \
+    libopencv-dev \
+    python3-opencv \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=ghcr.io/astral-sh/uv:0.7.19 /uv /bin/uv
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
@@ -26,8 +32,8 @@ ADD . ${PROJECT_HOME}/
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-editable
 
-COPY .cicd/include/run-migrations.py /usr/local/bin/run-migrations.py
-RUN chmod +x /usr/local/bin/run-migrations.py
+# COPY .cicd/include/run-migrations.py /usr/local/bin/run-migrations.py
+# RUN chmod +x /usr/local/bin/run-migrations.py
 
 CMD [ \
     "uv", \

@@ -2,6 +2,9 @@
 name = "insperion-api"
 version = "0.1.0"
 description = "Add your description here"
+authors = [
+  { name = "Apoorv Yadav", email = "apoorv.ydv17@gmail.com" }
+]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -10,7 +13,47 @@ dependencies = [
     "fastapi>=0.119.1",
     "httpx>=0.28.1",
     "jwt>=1.4.0",
+    "numpy>=2.3.4",
+    "opencv-python-headless>=4.11.0.86",
     "psycopg2-binary>=2.9.11",
+    "pydantic-settings>=2.11.0",
     "sqlalchemy>=2.0.44",
+    "ultralytics>=8.3.218",
     "uvicorn>=0.38.0",
+    "wsproto>=1.2.0",
 ]
+
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.4.1",
+  "pre-commit>=4.2.0",
+  "tox>=4.27.0",
+  "pip-tools>=7.4.1",
+  "mypy>=1.16.1",
+  "pytest-asyncio>=1.0.0",
+  "ruff>=0.12.2",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build]
+packages = ["src/insperion_api", "tests"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/src/insperion_api",
+  "/tests",
+  "/Dockerfile",
+  "/docker-compose.yml"
+]
+
+[tool.ruff]
+line-length = 88
+extend-exclude = ["src/insperion_api/migrations/versions/*.py"]
+
+
+[tool.ruff.format]
+quote-style = "double"  # Optional, black-like style

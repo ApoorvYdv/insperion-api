@@ -5,7 +5,8 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from pydantic import ValidationError
 
 from insperion_api.core.constants.error_response import ErrorResponse
-from insperion_api.settings.config import get_env
+from insperion_api.routers.inspection import inspection_router
+from insperion_api.settings.config import settings
 from insperion_api.utils.common.pydantic_error_parser import build_error_response
 
 description = """
@@ -25,11 +26,9 @@ def root():
     return RedirectResponse(url="/docs")
 
 
-origins = get_env("ALLOWED_ORIGINS") or []
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.allowed_origins,
     allow_credentials=True,
     allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
     allow_headers=[
@@ -64,3 +63,6 @@ async def internal_server_error_handler(request: Request, exc: Exception):
         status_code=ErrorResponse.INTERNAL_SERVER_ERROR.value.status_code,
         content={"detail": ErrorResponse.INTERNAL_SERVER_ERROR.value.message},
     )
+
+
+app.include_router(inspection_router)
