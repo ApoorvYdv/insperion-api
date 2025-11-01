@@ -21,6 +21,9 @@ class ErrorDetail:
 class ErrorResponse(Enum):
     """Error codes with their corresponding details."""
 
+    # Brand
+    BRAND_NOT_FOUND = ErrorDetail("Vehicle brand not found")
+
     # Validation errors
     MISSING_REQUIRED_FIELD = ErrorDetail("Missing required field: {field}")
     VALIDATION_ERROR = ErrorDetail(
