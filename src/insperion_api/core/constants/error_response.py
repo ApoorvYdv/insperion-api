@@ -21,8 +21,21 @@ class ErrorDetail:
 class ErrorResponse(Enum):
     """Error codes with their corresponding details."""
 
-    # Brand
+    # Vehicle
     BRAND_NOT_FOUND = ErrorDetail("Vehicle brand not found")
+    MODEL_NOT_FOUND = ErrorDetail("Vehicle model not found")
+    VARIANT_NOT_FOUND = ErrorDetail("Vehicle variant not found")
+
+    # Variant
+    INVALID_VARIANT_PROVIDED = ErrorDetail(
+        "Invalid vehicle variant provided: {variant}"
+    )
+
+    # Config
+    CONFIG_ALREADY_EXISTS = ErrorDetail(
+        "Config with section '{config_section}' and key '{config_key}' already exists"
+    )
+    CONFIG_NOT_FOUND = ErrorDetail("Config with ID: {config_id} not found")
 
     # Validation errors
     MISSING_REQUIRED_FIELD = ErrorDetail("Missing required field: {field}")
