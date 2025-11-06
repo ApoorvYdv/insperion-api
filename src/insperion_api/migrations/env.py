@@ -2,55 +2,58 @@
 # isort: skip_file
 from logging import getLogger
 from logging.config import fileConfig
-from alembic.operations import ops
+
 from alembic import context
-from sqlalchemy import MetaData, engine_from_config, pool
+from sqlalchemy import engine_from_config, pool, MetaData
 
 from insperion_api.config.database import DatabaseConfig
-from insperion_api.migrations.utils import (
-    get_schemas,
-)
 
-from insperion_api.core.models.config.config import Base as ConfigBase
-from insperion_api.core.models.agency.agency import Base as AgencyBase
+from insperion_api.core.models.config import ConfigBase
+from insperion_api.core.models.vehicle import VehicleBase
 
-schemas = get_schemas()
+# this is the Alembic Config object, which provides
+# access to the values within the .ini file in use.
 config = context.config
-logger = getLogger("alembic")
 
-
+# Interpret the config file for Python logging.
+# This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 
 config.set_main_option("sqlalchemy.url", DatabaseConfig().build_url_as_string())
 
+# add your model's MetaData object here
+# for 'autogenerate' support
+# from myapp import mymodel
+# target_metadata = mymodel.Base.metadata
 
-target_metadata = [AgencyBase.metadata, ConfigBase.metadata]
+target_metadata = [VehicleBase.metadata, ConfigBase.metadata]
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
+
+
 merged_metadata = MetaData()
+for _metadata in target_metadata:
+    for tbl in _metadata.tables.values():
+        merged_metadata._add_table(tbl.name, tbl.schema, tbl)
 
-for tbl in ConfigBase.metadata.sorted_tables:
-    tbl.tometadata(merged_metadata)
-
-
-for schema in schemas:
-    for tbl in AgencyBase.metadata.sorted_tables:
-        tbl.tometadata(merged_metadata, schema=schema)
+logger = getLogger("alembic")
 
 
-def process_revision_directives(context, revision, directives):
-    """
-    Adds schema creation statements to the top of the generated migration
-    """
-    if getattr(context.config.cmd_opts, "autogenerate", False):
-        script = directives[0]
+def include_object(object, name, type_, reflected, compare_to):
+    if type_ != "table":
+        return True
 
-        upgrade_ops_container = script.upgrade_ops
+    # Get schema from the object (e.g., from the model's __table_args__)
+    model_table = merged_metadata.tables.get(f"{object.schema}.{name}")
+    if model_table is None:
+        return False  # No model defined for this schema.table
 
-        upgrade_ops_container.ops = [
-            ops.ExecuteSQLOp(f"CREATE SCHEMA IF NOT EXISTS {schema};")
-            for schema in schemas
-        ] + upgrade_ops_container.ops
+    model_schema = model_table.schema
+    return object.schema == model_schema
 
 
 def run_migrations_offline() -> None:
@@ -68,12 +71,12 @@ def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
+        target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
-        target_metadata=merged_metadata,
         transaction_per_migration=True,
-        process_revision_directives=process_revision_directives,
         include_schemas=True,
+        include_object=include_object,
     )
 
     with context.begin_transaction():
@@ -87,33 +90,32 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
 
-    with connectable.connect() as connection:
-        try:
+    try:
+        with connectable.connect() as connection:
             context.configure(
                 connection=connection,
-                target_metadata=merged_metadata,
+                target_metadata=target_metadata,
                 transaction_per_migration=True,
-                process_revision_directives=process_revision_directives,
                 include_schemas=True,
+                include_object=include_object,
             )
 
             with context.begin_transaction():
                 context.run_migrations()
-        finally:
-            logger.info("Trying to close database connection... ")
-            connection.close()
-            logger.info(
-                "Connection Status post closing connection: closed"
-                if connection.closed
-                else "open"
-            )
+    finally:
+        logger.info("Trying to close database connection... ")
+        connection.close()
+        logger.info(
+            "Connection Status post closing connection: closed"
+            if connection.closed
+            else "open"
+        )
 
 
 if context.is_offline_mode():
