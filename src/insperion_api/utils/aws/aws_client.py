@@ -4,7 +4,7 @@ from enum import Enum
 import aioboto3
 from botocore.config import Config
 
-from insperion_api.settings.config import get_env
+from insperion_api.settings.config import settings
 
 
 class AWSServices(Enum):
@@ -22,18 +22,17 @@ async def get_client(service: str):
     aws_credentials = {
         k: v
         for k, v in {
-            "aws_access_key_id": get_env("AWS_ACCESS_KEY_ID"),
-            "aws_secret_access_key": get_env("AWS_SECRET_ACCESS_KEY"),
-            "aws_session_token": get_env("AWS_SESSION_TOKEN"),
-            "region_name": get_env("AWS_REGION"),
+            "aws_access_key_id": settings.aws_access_key_id,
+            "aws_secret_access_key": settings.aws_secret_access_key,
+            "region_name": settings.aws_region,
         }.items()
         if v
     }
     if service == AWSServices.S3.value:
-        aws_credentials["config"] = Config(signature_version="s3v4")
+        aws_credentials["config"] = Config(signature_version="s3v4")  # type: ignore
     async with session.client(
         service,
-        **aws_credentials,
+        **aws_credentials,  # type: ignore
     ) as client:
         yield client
 

@@ -1,14 +1,14 @@
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from insperion_api.config.database import DatabaseConfig
-from insperion_api.settings.config import get_env
+from insperion_api.settings.config import settings
 
 db_cfg = DatabaseConfig()
 
 
 class AsyncDatabaseSession:
-    pool_size = get_env("DB_POOL_SIZE", 10)
-    max_overflow = get_env("DB_MAX_OVERFLOW", 10)
+    pool_size = settings.db_pool_size
+    max_overflow = settings.db_max_overflow
 
     engine = create_async_engine(
         DatabaseConfig().build_db_url(async_driver=True),

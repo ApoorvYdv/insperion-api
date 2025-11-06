@@ -21,7 +21,7 @@ services:
       - PYTHONUNBUFFERED=1
       - LOG_LEVEL=debug
       - DB_USERNAME=username
-      - DB_PASSWORD=username
+      - DB_PASSWORD=password
       - DB_ENGINE=postgresql
       - DB_HOST=db
       - DB_PORT=5432
@@ -40,7 +40,7 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=insperion_api
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
 

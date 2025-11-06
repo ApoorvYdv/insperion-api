@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from starlette.requests import Request
 
 from insperion_api.core.constants.error_response import ErrorResponse
-from insperion_api.settings.config import get_env
+from insperion_api.settings.config import settings
 from insperion_api.utils.common.custom_http_exception import CustomHTTPException
 from insperion_api.utils.common.logger import logger
 
@@ -44,7 +44,7 @@ class JWTBearer(HTTPBearer):
         super().__init__(auto_error=auto_error)
 
     async def _load_jwks(self):
-        user_pool_id = get_env("COGNITO_USER_POOL_ID")
+        user_pool_id = settings.cognito_user_pool_id
         logger.warning(
             "Using user_pool_id set in environment (COGNITO_USER_POOL_ID) instead of the config table"
         )

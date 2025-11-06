@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     db_username: str = Field(..., alias="DB_USERNAME")
     db_password: str = Field(..., alias="DB_PASSWORD")
     db_host: str = Field("localhost", alias="DB_HOST")
-    db_port: int = Field(5433, alias="DB_PORT")
+    db_port: int = Field(5432, alias="DB_PORT")
     db_name: str = Field("insperion_api", alias="DB_NAME")
     db_pool_size: int = Field(10, alias="DB_POOL_SIZE")
     db_max_overflow: int = Field(10, alias="DB_MAX_OVERFLOW")
@@ -64,4 +64,4 @@ class Settings(BaseSettings):
 
 
 # Create settings instance
-settings = Settings()
+settings = Settings()  # type: ignore
