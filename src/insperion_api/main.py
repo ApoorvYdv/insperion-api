@@ -7,6 +7,10 @@ from pydantic import ValidationError
 from insperion_api.core.constants.error_response import ErrorResponse
 from insperion_api.routers.developer.config import config_router
 from insperion_api.routers.inspection import inspection_router
+from insperion_api.routers.vehicle import vehicle_router
+from insperion_api.routers.vehicles.brand import brand_router
+from insperion_api.routers.vehicles.model import model_router
+from insperion_api.routers.vehicles.variant import variant_router
 from insperion_api.settings.config import settings
 from insperion_api.utils.common.pydantic_error_parser import build_error_response
 
@@ -66,5 +70,9 @@ async def internal_server_error_handler(request: Request, exc: Exception):
     )
 
 
+app.include_router(brand_router)
+app.include_router(model_router)
+app.include_router(variant_router)
+app.include_router(vehicle_router)
 app.include_router(inspection_router)
 app.include_router(config_router)

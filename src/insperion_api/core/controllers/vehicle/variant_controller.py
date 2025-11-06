@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from insperion_api.core.constants.error_response import ErrorResponse
 from insperion_api.core.models.vehicle import VehicleVariant
-from insperion_api.core.schemas.variant import (
+from insperion_api.core.schemas.vehicle.variant import (
     AddVehicleVariantRequest,
     UpdateVehicleVariantRequest,
 )
@@ -60,13 +60,13 @@ class VariantController:
 
     async def delete_variant(self, variant_id: int):
         async with session_context(self.engine) as session:
-            variant_id = await session.execute(
+            deleted_variant_id = await session.execute(
                 delete(VehicleVariant)
                 .filter(VehicleVariant.id == variant_id)
                 .returning(VehicleVariant.id)
             )
 
-            if not variant_id:
+            if not deleted_variant_id:
                 raise CustomHTTPException(
                     ErrorResponse.BRAND_NOT_FOUND
                 ).to_http_exception()
