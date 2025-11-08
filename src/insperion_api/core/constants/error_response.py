@@ -36,6 +36,7 @@ class ErrorResponse(Enum):
         "Config with section '{config_section}' and key '{config_key}' already exists"
     )
     CONFIG_NOT_FOUND = ErrorDetail("Config with ID: {config_id} not found")
+    CONFIG_KEY_NOT_FOUND = ErrorDetail("Config key: {config_key} not found")
 
     # Validation errors
     MISSING_REQUIRED_FIELD = ErrorDetail("Missing required field: {field}")

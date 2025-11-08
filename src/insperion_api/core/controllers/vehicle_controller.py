@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncEngine
 
 from insperion_api.core.constants.error_response import ErrorResponse
-from insperion_api.core.models.vehicle import VehicleUnit, VehicleVariant
+from insperion_api.core.models.vehicle import Inspection, VehicleUnit, VehicleVariant
 from insperion_api.core.schemas.vehicle_unit import VehicleScanDetails
 from insperion_api.modules.database_configs.inspection_config import InspectionConfig
 from insperion_api.utils.common.custom_http_exception import CustomHTTPException
@@ -83,11 +83,17 @@ class VehicleController:
             vehicle_scan_details.variant_info.variant_name
         )
 
-        vehicle_unit = VehicleUnit(
-            variant_id=variant.id, **vehicle_scan_details.vehicle_unit.model_dump()
-        )
         flows = await self.inspection_config.flows
-        print(flows)
+        inspections = []
+        for flow_no, flows in flows.items():
+            for flow in flows:
+                inspections.append(Inspection(flow_no=flow_no, **flow))
+
+        vehicle_unit = VehicleUnit(
+            variant_id=variant.id,
+            inspections=inspections,
+            **vehicle_scan_details.vehicle_unit.model_dump(),
+        )
 
         async with session_context(self.engine) as session:
             session.add(vehicle_unit)

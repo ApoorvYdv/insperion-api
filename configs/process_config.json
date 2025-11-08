@@ -1,0 +1,28 @@
+{
+  "flow_1": [
+    {
+      "inspection_type_display_name": "Wheels Check",
+      "inspection_type": "wheels_check"
+    },
+    {
+      "inspection_type_display_name": "Tyre Size",
+      "inspection_type": "tyre_size_check"
+    }
+  ],
+  "flow_2": [
+    {
+      "inspection_type_display_name": "Fuel Lid Check",
+      "inspection_type": "fuel_lid_check"
+    },
+    {
+      "inspection_type_display_name": "Back Trunk Check",
+      "inspection_type": "back_trunk_check"
+    }
+  ],
+  "flow_3": [
+    {
+      "inspection_type_display_name": "Steering Wheel Check",
+      "inspection_type": "steering_wheel_check"
+    }
+  ]
+}

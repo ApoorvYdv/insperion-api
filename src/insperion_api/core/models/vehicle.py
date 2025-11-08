@@ -111,7 +111,7 @@ class Inspection(VehicleBase):
         String(512), nullable=False
     )
 
-    results: Mapped[dict] = mapped_column(JSON, nullable=False)
+    results: Mapped[dict] = mapped_column(JSON, nullable=True)
     status: Mapped[str] = mapped_column(String(32), default=InspectionStatus.PENDING)
 
     # Relationships
